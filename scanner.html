@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardiana - Plant Scanner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #90EE90;
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .navbar {
+            display: flex;
+            align-items: center;
+            background-color: #333;
+            padding: 5px;
+        }
+
+        .logo {
+            height: 50px;
+            width: 50px;
+            margin-right: 20px;
+            border-radius: 50%;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        .container {
+            margin: 20px;
+            padding: 20px;
+            background-color:  #c1ebc6;;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container h2 {
+            margin-top: 0;
+        }
+
+        footer {
+            background-color: #2e7d32;
+            color: white;
+            text-align: center;
+            padding: 0.2px 0.2px;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        button {
+            background-color: green;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        button:hover {
+            background-color: Darkgreen;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #videoElement, #canvas {
+            width: 100%;
+            max-width: 500px;
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <img src="llogobot.png" alt="Guardiana Logo" class="logo">
+    </nav>
+    <center>
+        <h1>SCANNER</h1>
+    </center>
+
+    <div class="container">
+        <h2>Scan or Upload Leaf Image</h2>
+        <button onclick="startCamera()">Open Camera</button>
+        <button onclick="stopCamera()">Stop Camera</button><br><br>
+        <video id="videoElement"></video>
+        <canvas id="canvas"></canvas>
+        <br>
+        <label for="fileUpload"><b>Upload Image : </b></label>&nbsp;&nbsp;&nbsp;
+        <input type="file" id="fileUpload" accept="image/*" onchange="previewFile()"><br>
+        <img id="uploadedImage" src="" alt="Uploaded Image" style="max-width: 100%; display: none;">
+        <br><br>
+        <center>
+        <button>Predict</button></center>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Guardiana. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function startCamera() {
+            var video = document.getElementById('videoElement');
+            video.style.display = 'block';
+            var constraints = {
+                video: true
+            };
+
+            navigator.mediaDevices.getUserMedia(constraints)
+                .then(function(stream) {
+                    video.srcObject = stream;
+                    video.play();
+                })
+                .catch(function(err) {
+                    console.error("Error accessing camera: " + err);
+                });
+        }
+
+        function stopCamera() {
+            var video = document.getElementById('videoElement');
+            var stream = video.srcObject;
+            var tracks = stream.getTracks();
+
+            tracks.forEach(function(track) {
+                track.stop();
+            });
+
+            video.style.display = 'none';
+        }
+
+        function previewFile() {
+            var preview = document.getElementById('uploadedImage');
+            var file = document.getElementById('fileUpload').files[0];
+            var reader = new FileReader();
+
+            reader.onloadend = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+            }
+
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = "";
+                preview.style.display = 'none';
+            }
+        }
+        
+    </script>
+</body>
+</html>
